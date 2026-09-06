@@ -25,11 +25,17 @@
     <!-- ШАПКА -->
 
     <header>
-
         <div class="logo">
             🧪 Химкарточки
         </div>
 
+        <button
+            id="auth-button"
+            class="auth-button"
+            type="button"
+        >
+            Войти
+        </button>
     </header>
 
 
@@ -830,6 +836,56 @@
 
 </main>
 
+<!-- АВТОРИЗАЦИЯ -->
+<div id="auth-modal" class="auth-modal hidden">
+    <div class="auth-box">
+
+        <button
+            id="auth-close-button"
+            class="auth-close-button"
+            type="button"
+        >
+            ×
+        </button>
+
+        <h2 id="auth-title">Вход</h2>
+
+        <input
+            id="auth-email"
+            class="auth-input"
+            type="email"
+            placeholder="Электронная почта"
+        >
+
+        <input
+            id="auth-password"
+            class="auth-input"
+            type="password"
+            placeholder="Пароль"
+        >
+
+        <button
+            id="auth-submit-button"
+            class="auth-submit-button"
+            type="button"
+        >
+            Войти
+        </button>
+
+        <button
+            id="auth-switch-button"
+            class="auth-switch-button"
+            type="button"
+        >
+            Нет аккаунта? Зарегистрироваться
+        </button>
+
+        <p id="auth-message" class="auth-message"></p>
+
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 
 </body>

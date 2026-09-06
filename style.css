@@ -2415,3 +2415,191 @@ input:checked
         height: 30px;
     }
 }
+
+/* ========================================
+   ГРУППОВАЯ СОРТИРОВКА — КОМПАКТНЫЕ КАРТОЧКИ
+   ======================================== */
+
+.grouping-target-items {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.grouping-target-items .grouping-item {
+    width: auto;
+    min-width: 55px;
+    max-width: 100%;
+
+    min-height: 42px;
+    padding: 8px 12px;
+
+    box-sizing: border-box;
+
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+/* Подсказка занимает всю ширину */
+.grouping-target-items .grouping-drop-hint {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px 8px;
+}
+
+/* Для больших наборов — ещё компактнее */
+.grouping-groups.grouping-count-7 .grouping-target-items .grouping-item,
+.grouping-groups.grouping-count-8 .grouping-target-items .grouping-item {
+    min-height: 38px;
+    padding: 6px 9px;
+    font-size: 14px;
+}
+
+/* На маленьком экране карточки могут переноситься */
+@media (max-width: 700px) {
+    .grouping-target-items .grouping-item {
+        min-width: 50px;
+        max-width: 100%;
+    }
+}
+
+/* ========================================
+   АВТОРИЗАЦИЯ
+   ======================================== */
+
+.auth-button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #4f46e5;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.auth-button:hover {
+    background: #4338ca;
+}
+
+.auth-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.35);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.auth-modal.hidden {
+    display: none;
+}
+
+.auth-box {
+    position: relative;
+
+    width: 100%;
+    max-width: 420px;
+
+    padding: 30px;
+    box-sizing: border-box;
+
+    background: white;
+    border-radius: 18px;
+
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.auth-box h2 {
+    margin: 0 0 22px;
+    text-align: center;
+    font-size: 26px;
+}
+
+.auth-close-button {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+
+    border: none;
+    background: transparent;
+
+    font-size: 28px;
+    line-height: 1;
+    color: #777;
+
+    cursor: pointer;
+}
+
+.auth-close-button:hover {
+    color: #222;
+}
+
+.auth-input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 13px 14px;
+    margin-bottom: 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+
+    font-size: 16px;
+    outline: none;
+}
+
+.auth-input:focus {
+    border-color: #4f46e5;
+}
+
+.auth-submit-button {
+    width: 100%;
+
+    padding: 13px;
+    margin-top: 4px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #4f46e5;
+    color: white;
+
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.auth-submit-button:hover {
+    background: #4338ca;
+}
+
+.auth-switch-button {
+    display: block;
+    width: 100%;
+
+    margin-top: 14px;
+
+    border: none;
+    background: transparent;
+
+    color: #4f46e5;
+
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.auth-message {
+    min-height: 20px;
+    margin: 14px 0 0;
+
+    text-align: center;
+    font-size: 14px;
+}

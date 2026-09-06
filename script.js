@@ -7,6 +7,66 @@
 // ========================================
 // НАХОДИМ ЭЛЕМЕНТЫ СТРАНИЦЫ
 // ========================================
+// ========================================
+// SUPABASE
+// ========================================
+
+const SUPABASE_URL = "https://itoljitbusamycafwmps.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_JFMVTNy1Yjcz4YHaB_go-g_VPFQTyXR";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+// ========================================
+// АВТОРИЗАЦИЯ — ИНТЕРФЕЙС
+// ========================================
+
+const authButton = document.querySelector("#auth-button");
+const authModal = document.querySelector("#auth-modal");
+const authCloseButton = document.querySelector("#auth-close-button");
+const authTitle = document.querySelector("#auth-title");
+const authSubmitButton = document.querySelector("#auth-submit-button");
+const authSwitchButton = document.querySelector("#auth-switch-button");
+const authMessage = document.querySelector("#auth-message");
+
+let authMode = "login";
+
+authButton.addEventListener("click", () => {
+    authModal.classList.remove("hidden");
+    authMessage.textContent = "";
+});
+
+authCloseButton.addEventListener("click", () => {
+    authModal.classList.add("hidden");
+});
+
+authModal.addEventListener("click", (event) => {
+    if (event.target === authModal) {
+        authModal.classList.add("hidden");
+    }
+});
+
+authSwitchButton.addEventListener("click", () => {
+    authMode = authMode === "login" ? "signup" : "login";
+
+    if (authMode === "login") {
+        authTitle.textContent = "Вход";
+        authSubmitButton.textContent = "Войти";
+        authSwitchButton.textContent =
+            "Нет аккаунта? Зарегистрироваться";
+    } else {
+        authTitle.textContent = "Регистрация";
+        authSubmitButton.textContent = "Зарегистрироваться";
+        authSwitchButton.textContent =
+            "Уже есть аккаунт? Войти";
+    }
+
+    authMessage.textContent = "";
+});    
 
 const homePage = document.querySelector("#home-page");
 const creatorPage = document.querySelector("#creator-page");
