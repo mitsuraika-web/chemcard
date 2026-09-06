@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Химкарточки</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- ШАПКА -->
+
+    <header>
+
+        <div class="logo">
+            🧪 Химкарточки
+        </div>
+
+    </header>
+
+
+
+    <!-- ГЛАВНАЯ СТРАНИЦА -->
+
+    <main id="home-page">
+
+        <section class="hero">
+
+            <h1>
+                Химкарточки
+            </h1>
+
+            <p>
+                Создавай наборы карточек и изучай
+                химию удобным способом.
+            </p>
+
+            <button
+                id="create-set-button"
+                class="create-button"
+            >
+                + Создать набор
+            </button>
+
+        </section>
+
+
+
+        <!-- МОИ НАБОРЫ -->
+
+        <section class="sets-section">
+
+            <h2>
+                Мои наборы
+            </h2>
+
+            <div id="sets-container">
+
+                <!-- Здесь JavaScript покажет наборы -->
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- СОЗДАНИЕ НАБОРА -->
+
+    <main
+        id="creator-page"
+        class="hidden"
+    >
+
+        <section class="creator">
+
+            <button
+                class="back-button"
+            >
+                ← Назад
+            </button>
+
+
+            <h1 id="creator-title">
+                Создание набора
+            </h1>
+
+            <div class="set-type-selector">
+
+                <h2>Тип набора</h2>
+
+                <label class="set-type-option">
+                    <input
+                        type="radio"
+                        name="set-type"
+                        value="cards"
+                        checked
+                    >
+
+                    <div>
+                        <strong>📚 Обычный набор</strong>
+                        <span>Термин → ответ</span>
+                    </div>
+                </label>
+
+                <label class="set-type-option">
+                    <input
+                        type="radio"
+                        name="set-type"
+                        value="grouping"
+                    >
+
+                    <div>
+                        <strong>🗂️ Групповая сортировка</strong>
+                        <span>Группы → элементы</span>
+                    </div>
+                </label>
+
+            </div>
+
+            <label>
+                Название набора
+            </label>
+
+
+            <input
+                type="text"
+                id="set-title"
+                placeholder="Например: Химические элементы"
+            >
+
+
+            <h2>
+                Карточки
+            </h2>
+
+
+            <div id="cards-container">
+
+                <!-- Карточки появятся здесь -->
+
+            </div>
+
+
+            <button
+                id="add-card-button"
+                class="secondary-button"
+            >
+                + Добавить карточку
+            </button>
+
+            <div
+                id="grouping-creator"
+                class="hidden"
+            >
+
+                <h2>
+                    Группы
+                </h2>
+
+                <div id="groups-container">
+                </div>
+
+                <button
+                    id="add-group-button"
+                    class="secondary-button"
+                    type="button"
+                >
+                    + Добавить группу
+                </button>
+
+            </div>
+
+            <button
+                id="save-set-button"
+                class="create-button save-button"
+            >
+                Сохранить набор
+            </button>
+
+        </section>
+
+    </main>
+
+<!-- СТРАНИЦА НАБОРА -->
+
+<main
+    id="set-page"
+    class="hidden"
+>
+
+    <section class="set-page-content">
+
+        <button
+            id="set-back-button"
+            class="back-button"
+        >
+            ← Назад
+        </button>
+
+
+        <h1 id="selected-set-title">
+            Название набора
+        </h1>
+
+
+        <p id="selected-set-count">
+            0 карточек
+        </p>
+
+        <button
+             id="edit-set-button"
+             class="secondary-button"
+             type="button"
+            >           
+                ✏️ Отредактировать набор
+        </button>
+
+        <h2>
+            Выберите режим
+        </h2>
+
+
+        <div class="modes-grid">
+
+
+            <button
+                class="mode-card"
+                data-mode="flashcards"
+            >
+
+                <div class="mode-icon">
+                    🃏
+                </div>
+
+                <div class="mode-title">
+                    Карточки
+                </div>
+
+                <div class="mode-description">
+                    Изучай термины и ответы
+                </div>
+
+            </button>
+
+
+
+            <button
+                class="mode-card"
+                data-mode="quiz"
+            >
+
+                <div class="mode-icon">
+                    🎯
+                </div>
+
+                <div class="mode-title">
+                    Викторина
+                </div>
+
+                <div class="mode-description">
+                    Выбирай правильный ответ
+                </div>
+
+            </button>
+
+
+
+            <button
+                class="mode-card"
+                data-mode="test"
+            >
+
+                <div class="mode-icon">
+                    📝
+                </div>
+
+                <div class="mode-title">
+                    Тест
+                </div>
+
+                <div class="mode-description">
+                    Проверь свои знания
+                </div>
+
+            </button>
+
+
+
+            <button
+                class="mode-card"
+                data-mode="matching"
+            >
+
+                <div class="mode-icon">
+                    🔗
+                </div>
+
+                <div class="mode-title">
+                    Сопоставление
+                </div>
+
+                <div class="mode-description">
+                    Соедини термин и ответ
+                </div>
+
+            </button>
+
+            <button
+                class="mode-card grouping-mode-card hidden"
+                data-mode="grouping"
+            >
+                <div class="mode-icon">
+                    🗂️
+                </div>
+
+                <div class="mode-title">
+                    Групповая сортировка
+                </div>
+
+                <div class="mode-description">
+                    Распредели элементы по группам
+                </div>
+            </button>
+
+
+        </div>
+
+    </section>
+
+</main>
+
+ <!-- РЕЖИМ КАРТОЧЕК -->
+<main
+    id="flashcards-page"
+    class="hidden"
+>
+    <section class="set-page-content">
+
+        <button
+            id="flashcards-back-button"
+            class="back-button"
+            type="button"
+        >
+            ← Назад
+        </button>
+
+        <h1 id="flashcards-set-title">
+            Карточки
+        </h1>
+
+        <p id="flashcards-progress">
+            1 / 1
+        </p>
+
+        <div
+             id="flashcard"
+            class="flashcard"
+        >
+            <div class="flashcard-inner">
+
+                <!-- ЛИЦЕВАЯ СТОРОНА -->
+                <div class="flashcard-front">
+                    <div
+                         id="flashcard-term"
+                         class="flashcard-term"
+                     >
+                          Термин
+                    </div>
+                </div>
+
+                <!-- ОБОРОТНАЯ СТОРОНА -->
+                <div class="flashcard-back">
+                    <div
+                        id="flashcard-answer"
+                        class="flashcard-answer"
+                    >
+                        Ответ
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <p class="flashcard-hint">
+            Нажми на карточку, чтобы увидеть ответ
+        </p>
+
+        <div class="flashcard-controls">
+
+            <button
+                id="flashcard-prev"
+                class="secondary-button"
+                type="button"
+            >
+                ← Назад
+            </button>
+
+            <button
+                id="flashcard-next"
+                class="create-button"
+                type="button"
+            >
+                Далее →
+            </button>
+
+        </div>
+
+    </section>
+</main>
+
+<!-- РЕЖИМ ВИКТОРИНЫ -->
+<main
+    id="quiz-page"
+    class="hidden"
+>
+    <section class="set-page-content">
+
+        <button
+            id="quiz-back-button"
+            class="back-button"
+            type="button"
+        >
+            ← Назад
+        </button>
+
+        <h1 id="quiz-set-title">
+            🎯 Викторина
+        </h1>
+
+        <p id="quiz-progress">
+            1 / 1
+        </p>
+
+        <div class="quiz-question">
+            <p class="quiz-question-label">
+                Выбери правильный ответ:
+            </p>
+
+            <div
+                id="quiz-term"
+                class="quiz-term"
+            >
+                Термин
+            </div>
+        </div>
+
+        <div
+            id="quiz-options"
+            class="quiz-options"
+        >
+        </div>
+
+        <button
+            id="quiz-next"
+            class="create-button quiz-next-button"
+            type="button"
+        >
+            Далее →
+        </button>
+
+    </section>
+</main>
+
+<!-- РЕЖИМ ТЕСТА -->
+<main
+    id="test-page"
+    class="hidden"
+>
+    <section class="set-page-content">
+
+        <!-- НАЗАД -->
+        <button
+            id="test-back-button"
+            class="back-button"
+            type="button"
+        >
+            ← Назад
+        </button>
+
+
+        <!-- НАЗВАНИЕ НАБОРА -->
+        <h1 id="test-set-title">
+            📝 Тест
+        </h1>
+
+
+        <!-- ================================
+             НАСТРОЙКА ТЕСТА
+             ================================ -->
+
+        <div id="test-setup">
+
+            <h2 class="test-setup-title">
+                Как отвечать?
+            </h2>
+
+            <p class="test-setup-description">
+                Выбери способ прохождения теста
+            </p>
+
+
+            <!-- ВАРИАНТЫ ОТВЕТА -->
+
+            <label class="test-mode-option">
+
+                <input
+                    type="radio"
+                    name="test-mode"
+                    value="choice"
+                    checked
+                >
+
+                <div class="test-mode-option-content">
+
+                    <div class="test-mode-icon">
+                        🎯
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Варианты ответа
+                        </strong>
+
+                        <span>
+                            Выбирай один из предложенных вариантов
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </label>
+
+
+            <!-- ВВОД ОТВЕТА -->
+
+            <label class="test-mode-option">
+
+                <input
+                    type="radio"
+                    name="test-mode"
+                    value="input"
+                >
+
+                <div class="test-mode-option-content">
+
+                    <div class="test-mode-icon">
+                        ⌨️
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Ввод ответа
+                        </strong>
+
+                        <span>
+                            Напиши ответ самостоятельно
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </label>
+
+
+            <button
+                id="start-test-button"
+                class="create-button test-start-button"
+                type="button"
+            >
+                Начать тест →
+            </button>
+
+        </div>
+
+
+        <!-- ================================
+             САМ ТЕСТ
+             ================================ -->
+
+        <div
+            id="test-content"
+            class="hidden"
+        >
+
+            <p id="test-progress">
+                1 / 1
+            </p>
+
+
+            <div class="test-question">
+
+                <p class="test-question-label">
+                    Ответь на вопрос:
+                </p>
+
+                <div
+                    id="test-term"
+                    class="test-term"
+                >
+                    Термин
+                </div>
+
+            </div>
+
+
+            <!-- ВАРИАНТЫ -->
+
+            <div
+                id="test-options"
+                class="test-options"
+            >
+            </div>
+
+
+            <!-- ВВОД ОТВЕТА -->
+
+            <div
+                id="test-input-area"
+                class="test-input-area hidden"
+            >
+
+                <input
+                    id="test-answer-input"
+                    class="test-answer-input"
+                    type="text"
+                    placeholder="Введи ответ"
+                    autocomplete="off"
+                >
+
+                <button
+                    id="test-check-button"
+                    class="create-button"
+                    type="button"
+                >
+                    Проверить
+                </button>
+
+            </div>
+
+
+            <!-- РЕЗУЛЬТАТ ОТВЕТА -->
+
+            <div
+                id="test-feedback"
+                class="test-feedback hidden"
+            >
+            </div>
+
+
+            <!-- ДАЛЕЕ -->
+
+            <button
+                id="test-next-button"
+                class="create-button test-next-button"
+                type="button"
+            >
+                Далее →
+            </button>
+
+        </div>
+
+
+        <!-- ================================
+             РЕЗУЛЬТАТ ТЕСТА
+             ================================ -->
+
+        <div
+            id="test-result"
+            class="hidden"
+        >
+        </div>
+
+    </section>
+</main>
+
+
+<!-- ========================================
+     РЕЖИМ СОПОСТАВЛЕНИЯ
+     ======================================== -->
+
+<main
+    id="matching-page"
+    class="hidden"
+>
+    <section class="set-page-content">
+
+        <!-- НАЗАД -->
+        <button
+            id="matching-back-button"
+            class="back-button"
+            type="button"
+        >
+            ← Назад
+        </button>
+
+
+        <!-- НАЗВАНИЕ -->
+        <h1 id="matching-set-title">
+            🔗 Сопоставление
+        </h1>
+
+
+        <!-- ПРОГРЕСС -->
+        <p id="matching-progress">
+            0 / 5
+        </p>
+
+
+        <!-- ИГРА -->
+        <div
+            id="matching-game"
+            class="matching-game"
+        >
+
+            <!-- ЛЕВАЯ ЧАСТЬ -->
+            <div
+                id="matching-terms"
+                class="matching-terms"
+            >
+            </div>
+
+
+            <!-- ПРАВАЯ ЧАСТЬ -->
+            <div
+                id="matching-answers"
+                class="matching-answers"
+            >
+            </div>
+
+        </div>
+
+
+        <!-- ДАЛЕЕ -->
+        <button
+            id="matching-next-button"
+            class="create-button matching-next-button hidden"
+            type="button"
+        >
+            Далее →
+        </button>
+
+
+        <!-- РЕЗУЛЬТАТ -->
+        <div
+            id="matching-result"
+            class="hidden"
+        >
+        </div>
+
+    </section>
+</main>
+
+<!-- ========================================
+     РЕЖИМ ГРУППОВОЙ СОРТИРОВКИ
+     ======================================== -->
+
+<main
+    id="grouping-page"
+    class="hidden"
+>
+
+    <section class="set-page-content">
+
+        <button
+            id="grouping-back-button"
+            class="back-button"
+            type="button"
+        >
+            ← Назад
+        </button>
+
+
+        <h1 id="grouping-set-title">
+            🗂️ Групповая сортировка
+        </h1>
+
+
+        <p id="grouping-progress">
+            0 / 0
+        </p>
+
+
+        <!-- КАРТОЧКИ, КОТОРЫЕ НУЖНО РАСПРЕДЕЛИТЬ -->
+
+        <div
+            id="grouping-items"
+            class="grouping-items"
+        >
+        </div>
+
+
+        <!-- ГРУППЫ -->
+
+        <div
+            id="grouping-groups"
+            class="grouping-groups"
+        >
+        </div>
+
+
+        <!-- ФИНАЛ -->
+
+        <div
+            id="grouping-result"
+            class="hidden"
+        >
+        </div>
+
+    </section>
+
+</main>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
