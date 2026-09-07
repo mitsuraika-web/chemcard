@@ -931,23 +931,230 @@ saveSetButton.addEventListener(
 // СОХРАНЕНИЕ ДАННЫХ В LOCALSTORAGE
 // ========================================
 
-function saveSetData(setData) {
+async function saveSetData(setData) {
 
-    const savedSets =
+    const {
+        data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    // Если пользователь не вошёл —
+    // пока сохраняем набор только локально
+    if (!session) {
+
+        const savedSets =
+            JSON.parse(
+                localStorage.getItem("chemSets")
+            ) || [];
+
+        if (
+            editingSetIndex !== null &&
+            savedSets[editingSetIndex]
+        ) {
+            savedSets[editingSetIndex] = setData;
+
+            alert(
+                "Изменения сохранены!"
+            );
+
+        } else {
+            savedSets.push(setData);
+
+            alert(
+                "Набор сохранён!"
+            );
+        }
+
+        localStorage.setItem(
+            "chemSets",
+            JSON.stringify(savedSets)
+        );
+
+        editingSetIndex = null;
+
+        document
+            .querySelector("#set-title")
+            .value = "";
+
+        cardsContainer.innerHTML = "";
+        groupsContainer.innerHTML = "";
+
+        const cardsRadio =
+            document.querySelector(
+                'input[name="set-type"][value="cards"]'
+            );
+
+        if (cardsRadio) {
+            cardsRadio.checked = true;
+        }
+
+        cardsContainer
+            .classList
+            .remove("hidden");
+
+        addCardButton
+            .classList
+            .remove("hidden");
+
+        groupingCreator
+            .classList
+            .add("hidden");
+
+        creatorPage
+            .classList
+            .add("hidden");
+
+        setPage
+            .classList
+            .add("hidden");
+
+        homePage
+            .classList
+            .remove("hidden");
+
+        renderSets();
+
+        return;
+    }
+
+
+    // ========================================
+    // ПРОВЕРЯЕМ, ЯВЛЯЕТСЯ ЛИ ПОЛЬЗОВАТЕЛЬ АВТОРОМ
+    // ========================================
+
+    const { data: authorData } =
+        await supabaseClient
+            .from("author_users")
+            .select("user_id")
+            .eq("user_id", session.user.id)
+            .maybeSingle();
+
+    const isAuthor =
+        !!authorData;
+
+
+    // ========================================
+    // СОХРАНЯЕМ В SUPABASE
+    // ========================================
+
+    const cloudData = {
+        title: setData.title,
+        type: setData.type || "cards",
+        data: {
+            cards: setData.cards || [],
+            groups: setData.groups || []
+        },
+        owner_id: session.user.id,
+        is_author: isAuthor
+    };
+
+
+    let savedCloudSet = null;
+    let cloudError = null;
+
+
+    // ========================================
+    // НОВЫЙ НАБОР
+    // ========================================
+
+    if (
+        editingSetIndex === null
+    ) {
+
+        const result =
+            await supabaseClient
+                .from("sets")
+                .insert(cloudData)
+                .select()
+                .single();
+
+        savedCloudSet = result.data;
+        cloudError = result.error;
+
+    } else {
+
+        const savedSets =
+            JSON.parse(
+                localStorage.getItem("chemSets")
+            ) || [];
+
+        const oldSet =
+            savedSets[editingSetIndex];
+
+
+        if (oldSet && oldSet.id) {
+
+            const result =
+                await supabaseClient
+                    .from("sets")
+                    .update(cloudData)
+                    .eq("id", oldSet.id)
+                    .select()
+                    .single();
+
+            savedCloudSet = result.data;
+            cloudError = result.error;
+
+        } else {
+
+            const result =
+                await supabaseClient
+                    .from("sets")
+                    .insert(cloudData)
+                    .select()
+                    .single();
+
+            savedCloudSet = result.data;
+            cloudError = result.error;
+        }
+    }
+
+
+    // ========================================
+    // ЕСЛИ SUPABASE ВЕРНУЛА ОШИБКУ
+    // ========================================
+
+    if (cloudError) {
+
+        console.error(
+            "Ошибка сохранения набора в Supabase:",
+            cloudError
+        );
+
+        alert(
+            "Не удалось сохранить набор в облако.\n\n" +
+            cloudError.message
+        );
+
+        return;
+    }
+
+
+    // ========================================
+    // СОХРАНЯЕМ ОБЛАЧНЫЙ НАБОР ЛОКАЛЬНО
+    // ========================================
+
+    const localSets =
         JSON.parse(
-            localStorage.getItem(
-                "chemSets"
-            )
+            localStorage.getItem("chemSets")
         ) || [];
+
+
+    const localSet = {
+        id: savedCloudSet.id,
+        title: savedCloudSet.title,
+        type: savedCloudSet.type,
+        ...(savedCloudSet.data || {}),
+        owner_id: savedCloudSet.owner_id,
+        is_author: savedCloudSet.is_author
+    };
 
 
     if (
         editingSetIndex !== null &&
-        savedSets[editingSetIndex]
+        localSets[editingSetIndex]
     ) {
-
-        savedSets[editingSetIndex] =
-            setData;
+        localSets[editingSetIndex] =
+            localSet;
 
         alert(
             "Изменения сохранены!"
@@ -955,41 +1162,35 @@ function saveSetData(setData) {
 
     } else {
 
-        savedSets.push(
-            setData
-        );
+        localSets.push(localSet);
 
         alert(
-            "Набор сохранён!"
+            isAuthor
+                ? "Авторский набор сохранён!"
+                : "Набор сохранён!"
         );
-
     }
 
 
     localStorage.setItem(
         "chemSets",
-        JSON.stringify(savedSets)
+        JSON.stringify(localSets)
     );
 
 
+    // ========================================
+    // ОЧИЩАЕМ РЕДАКТОР
+    // ========================================
+
     editingSetIndex = null;
-
-
-    // Очищаем обычный редактор
 
     document
         .querySelector("#set-title")
         .value = "";
 
     cardsContainer.innerHTML = "";
-
-
-    // Очищаем редактор групп
-
     groupsContainer.innerHTML = "";
 
-
-    // Возвращаем обычный тип
 
     const cardsRadio =
         document.querySelector(
@@ -997,9 +1198,7 @@ function saveSetData(setData) {
         );
 
     if (cardsRadio) {
-
         cardsRadio.checked = true;
-
     }
 
 
@@ -1015,7 +1214,6 @@ function saveSetData(setData) {
         .classList
         .add("hidden");
 
-
     creatorPage
         .classList
         .add("hidden");
@@ -1030,9 +1228,95 @@ function saveSetData(setData) {
 
 
     renderSets();
-
 }
 
+// ========================================
+// ЗАГРУЗКА НАБОРОВ ИЗ SUPABASE
+// ========================================
+
+async function loadSetsFromSupabase() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("sets")
+            .select("*")
+            .order("created_at", {
+                ascending: true
+            });
+
+    if (error) {
+
+        console.error(
+            "Ошибка загрузки наборов из Supabase:",
+            error
+        );
+
+        return null;
+    }
+
+    return data.map(function(row) {
+
+        return {
+            id: row.id,
+            title: row.title,
+            type: row.type,
+            ...(row.data || {}),
+            owner_id: row.owner_id,
+            is_author: row.is_author
+        };
+
+    });
+}
+
+// ========================================
+// СИНХРОНИЗАЦИЯ НАБОРОВ С SUPABASE
+// ========================================
+
+async function syncSetsFromSupabase() {
+
+    const cloudSets =
+        await loadSetsFromSupabase();
+
+    if (!cloudSets) {
+        return;
+    }
+
+    const localSets =
+        JSON.parse(
+            localStorage.getItem("chemSets")
+        ) || [];
+
+
+    cloudSets.forEach(function(cloudSet) {
+
+        const existingIndex =
+            localSets.findIndex(function(localSet) {
+                return localSet.id === cloudSet.id;
+            });
+
+
+        if (existingIndex === -1) {
+
+            localSets.push(cloudSet);
+
+        } else {
+
+            localSets[existingIndex] =
+                cloudSet;
+
+        }
+
+    });
+
+
+    localStorage.setItem(
+        "chemSets",
+        JSON.stringify(localSets)
+    );
+
+
+    renderSets();
+}
 
 // ========================================
 // ПОКАЗЫВАЕМ СОХРАНЁННЫЕ НАБОРЫ
@@ -1374,7 +1658,7 @@ function renderSets() {
 // ПОКАЗЫВАЕМ НАБОРЫ ПРИ ЗАПУСКЕ
 // ========================================
 
-renderSets();
+syncSetsFromSupabase();
 
 // ========================================
 // НАЗАД СО СТРАНИЦЫ НАБОРА
