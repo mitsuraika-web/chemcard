@@ -35,9 +35,38 @@ const authMessage = document.querySelector("#auth-message");
 
 let authMode = "login";
 
-authButton.addEventListener("click", () => {
+let currentAuthSession = null;
+
+authButton.addEventListener("click", async () => {
+    if (currentAuthSession) {
+        await supabaseClient.auth.signOut();
+        return;
+    }
+
     authModal.classList.remove("hidden");
     authMessage.textContent = "";
+});
+
+// ========================================
+// СОСТОЯНИЕ АВТОРИЗАЦИИ
+// ========================================
+
+function updateAuthButton(session) {
+    currentAuthSession = session;
+
+    if (session) {
+        authButton.textContent = "Выйти";
+    } else {
+        authButton.textContent = "Войти";
+    }
+}
+
+supabaseClient.auth.getSession().then(({ data }) => {
+    updateAuthButton(data.session);
+});
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+    updateAuthButton(session);
 });
 
 authCloseButton.addEventListener("click", () => {
