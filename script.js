@@ -66,7 +66,54 @@ authSwitchButton.addEventListener("click", () => {
     }
 
     authMessage.textContent = "";
-});    
+});     
+
+// ========================================
+// АВТОРИЗАЦИЯ — ВХОД И РЕГИСТРАЦИЯ
+// ========================================
+
+authSubmitButton.addEventListener("click", async () => {
+    const email = document.querySelector("#auth-email").value.trim();
+    const password = document.querySelector("#auth-password").value;
+
+    if (!email || !password) {
+        authMessage.textContent =
+            "Введите электронную почту и пароль.";
+        return;
+    }
+
+    authMessage.textContent = "Подождите...";
+
+    if (authMode === "signup") {
+        const { error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            authMessage.textContent =
+                "Ошибка: " + error.message;
+            return;
+        }
+
+        authMessage.textContent =
+            "Регистрация выполнена! Проверьте почту для подтверждения.";
+    } else {
+        const { error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            authMessage.textContent =
+                "Ошибка: " + error.message;
+            return;
+        }
+
+        authMessage.textContent = "Вы вошли в аккаунт!";
+        authModal.classList.add("hidden");
+    }
+});
 
 const homePage = document.querySelector("#home-page");
 const creatorPage = document.querySelector("#creator-page");
