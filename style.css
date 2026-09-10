@@ -2645,7 +2645,7 @@ sub {
     line-height: normal !important;
 
     position: relative !important;
-    top: 0.28em !important;
+    top: 0.55em !important;
 }
 
 sup {
@@ -2655,5 +2655,5 @@ sup {
     line-height: normal !important;
 
     position: relative !important;
-    top: -0.42em !important;
+    top: -0.55em !important;
 }
