@@ -2615,3 +2615,21 @@ input:checked
     background: #f0f0f0;
     color: #555;
 }
+
+/* ========================================
+   ХИМИЧЕСКИЕ ИНДЕКСЫ — УВЕЛИЧЕННЫЕ
+   ======================================== */
+
+/* Нижний индекс */
+sub {
+    font-size: 0.72em;
+    line-height: 0;
+    vertical-align: -0.32em;
+}
+
+/* Верхний индекс / заряд */
+sup {
+    font-size: 0.72em;
+    line-height: 0;
+    vertical-align: 0.55em;
+}
