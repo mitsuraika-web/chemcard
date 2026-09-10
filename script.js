@@ -284,15 +284,61 @@ function getRichTextValue(editor) {
 }
 
 
-function setRichTextContent(element, value = "") {
+function formatChemicalText(value = "") {
+    let text = String(value);
 
+    // Если форматирование уже есть — ничего автоматически не меняем
+    if (/<(?:sub|sup|br)\b/i.test(text)) {
+        return sanitizeRichHTML(text);
+    }
+
+    // Защищаем HTML-символы
+    text = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    // Убираем знак ^ перед зарядом:
+    // CO3^2- → CO3 2-
+    text = text.replace(
+        /\^(\d+)([+-])/g,
+        " $1$2"
+    );
+
+    // Нижние индексы:
+    // H2O → H<sub>2</sub>O
+    // Na2CO3 → Na<sub>2</sub>CO<sub>3</sub>
+    // Ca(OH)2 → Ca(OH)<sub>2</sub>
+    text = text.replace(
+        /([A-Za-z\)])(\d+)/g,
+        "$1<sub>$2</sub>"
+    );
+
+    // Заряд после числа:
+    // 2+ → 2+
+    // 3- → 3-
+    text = text.replace(
+        /<sub>(\d+)<\/sub>([+-])(?=\s|$)/g,
+        "<sub>$1</sub><sup>$2</sup>"
+    );
+
+    // Заряд непосредственно после элемента:
+    // Na+ → Na+
+    // Cl- → Cl-
+    text = text.replace(
+        /([A-Za-z\)])([+-])(?=\s|$)/g,
+        "$1<sup>$2</sup>"
+    );
+
+    return text;
+}
+
+
+function setRichTextContent(element, value = "") {
     const stringValue = String(value);
 
-    if (/<(?:sub|sup|br)\b/i.test(stringValue)) {
-        element.innerHTML = sanitizeRichHTML(stringValue);
-    } else {
-        element.textContent = stringValue;
-    }
+    element.innerHTML =
+        formatChemicalText(stringValue);
 }
 
 
