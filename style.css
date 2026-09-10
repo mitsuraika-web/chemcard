@@ -2622,14 +2622,14 @@ input:checked
 
 /* Нижний индекс */
 sub {
-    font-size: 0.72em;
+    font-size: 0.78em;
     line-height: 0;
     vertical-align: -0.32em;
 }
 
 /* Верхний индекс / заряд */
 sup {
-    font-size: 0.72em;
+    font-size: 0.78em;
     line-height: 0;
     vertical-align: 0.55em;
 }
