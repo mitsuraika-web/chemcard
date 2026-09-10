@@ -1440,10 +1440,19 @@ function renderSets() {
             // ========================================
 
             setElement.innerHTML = `
-
                 <h3>
                     ${set.title}
                 </h3>
+
+                ${
+                    set.is_author
+                        ? `
+                            <div class="author-badge">
+                                ✦ Авторский набор
+                            </div>
+                        `
+                        : ""
+                }
 
                 <div class="set-count">
                     ${countText}
@@ -1480,26 +1489,77 @@ function renderSets() {
                 );
 
 
-            deleteButton.addEventListener(
-                "click",
-                function() {
+            // Авторские наборы нельзя удалять
+            // пользователям, которые не являются их владельцами
+            if (
+                savedSets[index].is_author &&
+                (
+                    !currentAuthSession ||
+                    savedSets[index].owner_id !==
+                    currentAuthSession.user.id
+                )
+            ) {
+                deleteButton.remove();
+            } else {
 
-                    savedSets.splice(
-                        index,
-                        1
-                    );
+                deleteButton.addEventListener(
+                    "click",
+                    async function() {
+
+                        const set =
+                            savedSets[index];
+
+                        if (!set) {
+                            return;
+                        }
 
 
-                    localStorage.setItem(
-                        "chemSets",
-                        JSON.stringify(savedSets)
-                    );
+                        // Сначала удаляем из Supabase
+                        if (set.id) {
+
+                            const { error } =
+                                await supabaseClient
+                                    .from("sets")
+                                    .delete()
+                                    .eq("id", set.id);
 
 
-                    renderSets();
+                            if (error) {
 
-                }
-            );
+                                console.error(
+                                    "Ошибка удаления набора:",
+                                    error
+                                );
+
+                                alert(
+                                    "Не удалось удалить набор."
+                                );
+
+                                return;
+                            }
+                        }
+
+
+                        // Затем удаляем из localStorage
+                        savedSets.splice(
+                            index,
+                            1
+                        );
+
+
+                        localStorage.setItem(
+                            "chemSets",
+                            JSON.stringify(
+                                savedSets
+                            )
+                        );
+
+
+                        renderSets();
+
+                    }
+                );
+            }
 
 
             // ========================================
