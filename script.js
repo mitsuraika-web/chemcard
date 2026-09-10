@@ -1479,87 +1479,87 @@ function renderSets() {
             `;
 
 
-            // ========================================
-            // УДАЛЕНИЕ НАБОРА
-            // ========================================
+// ========================================
+// УДАЛЕНИЕ НАБОРА
+// ========================================
 
-            const deleteButton =
-                setElement.querySelector(
-                    ".delete-set-button"
-                );
-
-
-            // Авторские наборы нельзя удалять
-            // пользователям, которые не являются их владельцами
-            if (
-                savedSets[index].is_author &&
-                (
-                    !currentAuthSession ||
-                    savedSets[index].owner_id !==
-                    currentAuthSession.user.id
-                )
-            ) {
-                deleteButton.remove();
-            } else {
-
-                deleteButton.addEventListener(
-                    "click",
-                    async function() {
-
-                        const set =
-                            savedSets[index];
-
-                        if (!set) {
-                            return;
-                        }
+const deleteButton =
+    setElement.querySelector(
+        ".delete-set-button"
+    );
 
 
-                        // Сначала удаляем из Supabase
-                        if (set.id) {
+// Авторский набор можно удалить
+// только его владельцу
+if (
+    savedSets[index].is_author &&
+    (
+        !currentAuthSession ||
+        savedSets[index].owner_id !==
+        currentAuthSession.user.id
+    )
+) {
+    deleteButton.remove();
 
-                            const { error } =
-                                await supabaseClient
-                                    .from("sets")
-                                    .delete()
-                                    .eq("id", set.id);
+} else {
 
+    deleteButton.addEventListener(
+        "click",
+        async function() {
 
-                            if (error) {
+            const set =
+                savedSets[index];
 
-                                console.error(
-                                    "Ошибка удаления набора:",
-                                    error
-                                );
-
-                                alert(
-                                    "Не удалось удалить набор."
-                                );
-
-                                return;
-                            }
-                        }
-
-
-                        // Затем удаляем из localStorage
-                        savedSets.splice(
-                            index,
-                            1
-                        );
-
-
-                        localStorage.setItem(
-                            "chemSets",
-                            JSON.stringify(
-                                savedSets
-                            )
-                        );
-
-
-                        renderSets();
-
-                    }
-                );
+            if (!set) {
+                return;
             }
+
+
+            // Удаляем набор из Supabase
+            if (set.id) {
+
+                const { error } =
+                    await supabaseClient
+                        .from("sets")
+                        .delete()
+                        .eq("id", set.id);
+
+
+                if (error) {
+
+                    console.error(
+                        "Ошибка удаления набора:",
+                        error
+                    );
+
+                    alert(
+                        "Не удалось удалить набор."
+                    );
+
+                    return;
+                }
+            }
+
+
+            // Удаляем набор локально
+            savedSets.splice(
+                index,
+                1
+            );
+
+
+            localStorage.setItem(
+                "chemSets",
+                JSON.stringify(savedSets)
+            );
+
+
+            renderSets();
+
+        }
+    );
+}
+            
 
 
             // ========================================
