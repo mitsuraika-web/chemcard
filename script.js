@@ -739,7 +739,7 @@ addCardButton.addEventListener(
 
 saveSetButton.addEventListener(
     "click",
-    function() {
+    async function() {
 
         const title =
             document
@@ -827,10 +827,14 @@ saveSetButton.addEventListener(
             }
 
 
-            saveSetData({
+            saveSetButton.disabled = true;
+
+            await saveSetData({
                 title: title,
                 cards: cards
             });
+
+            saveSetButton.disabled = false;
 
 
             return;
@@ -917,11 +921,15 @@ saveSetButton.addEventListener(
         }
 
 
-        saveSetData({
+        saveSetButton.disabled = true;
+
+        await saveSetData({
             title: title,
             type: "grouping",
             groups: groups
         });
+
+        saveSetButton.disabled = false;
 
     }
 );
