@@ -2657,3 +2657,14 @@ sup {
     position: relative !important;
     top: -0.55em !important;
 }
+
+/* ========================================
+   ВЫРАВНИВАНИЕ ИНДЕКСА В РЕЖИМАХ
+   ======================================== */
+
+#flashcards-progress,
+#quiz-progress,
+#test-progress {
+    margin-top: 0;
+    margin-bottom: 0;
+}
