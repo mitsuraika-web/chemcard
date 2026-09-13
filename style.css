@@ -2659,12 +2659,13 @@ sup {
 }
 
 /* ========================================
-   ВЫРАВНИВАНИЕ ИНДЕКСА В РЕЖИМАХ
+   ОДИНАКОВОЕ ПОЛОЖЕНИЕ ИНДЕКСА
    ======================================== */
 
 #flashcards-progress,
 #quiz-progress,
-#test-progress {
-    margin-top: 0;
+#test-progress,
+#matching-progress {
+    margin-top: 20px;
     margin-bottom: 0;
 }
