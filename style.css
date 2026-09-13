@@ -2657,15 +2657,3 @@ sup {
     position: relative !important;
     top: -0.55em !important;
 }
-
-/* ========================================
-   ОДИНАКОВОЕ ПОЛОЖЕНИЕ ИНДЕКСА
-   ======================================== */
-
-#flashcards-progress,
-#quiz-progress,
-#test-progress,
-#matching-progress {
-    margin-top: 20px;
-    margin-bottom: 0;
-}
