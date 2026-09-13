@@ -2634,29 +2634,6 @@ sup {
     vertical-align: 0.55em;
 }
 
-/* ========================================
-   ХИМИЧЕСКИЕ ИНДЕКСЫ — ЯВНЫЙ СДВИГ
-   ======================================== */
-
-sub {
-    display: inline-block !important;
-
-    font-size: 0.78em !important;
-    line-height: normal !important;
-
-    position: relative !important;
-    top: 0.55em !important;
-}
-
-sup {
-    display: inline-block !important;
-
-    font-size: 0.78em !important;
-    line-height: normal !important;
-
-    position: relative !important;
-    top: -0.55em !important;
-}
 
 /* ========================================
    ОДИНАКОВОЕ ПОЛОЖЕНИЕ ИНДЕКСА
