@@ -2634,6 +2634,29 @@ sup {
     vertical-align: 0.55em;
 }
 
+/* ========================================
+   ХИМИЧЕСКИЕ ИНДЕКСЫ — ЯВНЫЙ СДВИГ
+   ======================================== */
+
+sub {
+    display: inline-block !important;
+
+    font-size: 0.78em !important;
+    line-height: normal !important;
+
+    position: relative !important;
+    top: 0.55em !important;
+}
+
+sup {
+    display: inline-block !important;
+
+    font-size: 0.78em !important;
+    line-height: normal !important;
+
+    position: relative !important;
+    top: -0.55em !important;
+}
 
 /* ========================================
    ОДИНАКОВОЕ ПОЛОЖЕНИЕ ИНДЕКСА
@@ -2645,32 +2668,4 @@ sup {
 #matching-progress {
     margin-top: 20px;
     margin-bottom: 0;
-}
-
-/* ========================================
-   ХИМИЧЕСКИЕ ИНДЕКСЫ — АККУРАТНОЕ ПОЛОЖЕНИЕ
-   ======================================== */
-
-.flashcard-term sub,
-.flashcard-answer sub,
-.quiz-term sub,
-.quiz-question sub,
-.quiz-option sub,
-.test-question sub,
-.test-option sub {
-    vertical-align: -0.25em;
-    line-height: 1;
-    font-size: 0.65em;
-}
-
-.flashcard-term sup,
-.flashcard-answer sup,
-.quiz-term sup,
-.quiz-question sup,
-.quiz-option sup,
-.test-question sup,
-.test-option sup {
-    vertical-align: 0.45em;
-    line-height: 1;
-    font-size: 0.65em;
 }
