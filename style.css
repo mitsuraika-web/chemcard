@@ -2657,3 +2657,26 @@ sup {
     position: relative !important;
     top: -0.55em !important;
 }
+
+/* ========================================
+   ХИМИЧЕСКИЕ ИНДЕКСЫ — КОРРЕКЦИЯ ДЛЯ
+   КАРТОЧЕК, ВИКТОРИНЫ И ТЕСТА
+   ======================================== */
+
+.flashcard-term sub,
+.flashcard-answer sub,
+.quiz-term sub,
+.quiz-option sub,
+.test-question sub,
+.test-option sub {
+    top: 0.20em !important;
+}
+
+.flashcard-term sup,
+.flashcard-answer sup,
+.quiz-term sup,
+.quiz-option sup,
+.test-question sup,
+.test-option sup {
+    top: -0.20em !important;
+}
