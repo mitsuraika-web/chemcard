@@ -202,7 +202,7 @@ function sanitizeRichHTML(value = "") {
 
     const source = String(value);
 
-    if (!/<(?:sub|sup|br)\b/i.test(source)) {
+    if (!/<(?:sub|sup|br|img)\b/i.test(source)) {
         const holder = document.createElement("div");
         holder.textContent = source;
         return holder.innerHTML;
@@ -225,6 +225,25 @@ function sanitizeRichHTML(value = "") {
 
         if (node.tagName === "BR") {
             return document.createElement("br");
+        }
+
+        if (node.tagName === "IMG") {
+            const src = node.getAttribute("src") || "";
+
+            if (
+                !src.startsWith(
+                    "https://itoljitbusamycafwmps.supabase.co/storage/v1/object/public/card-images/"
+                )
+            ) {
+                return document.createDocumentFragment();
+            }
+
+            const image = document.createElement("img");
+            image.src = src;
+            image.alt = "";
+            image.className = "rich-inline-image";
+
+            return image;
         }
 
         if (node.tagName === "SUB" || node.tagName === "SUP") {
@@ -262,7 +281,7 @@ function setRichTextValue(editor, value = "") {
 
     const stringValue = String(value);
 
-    if (/<(?:sub|sup|br)\b/i.test(stringValue)) {
+    if (/<(?:sub|sup|br|img)\b/i.test(stringValue)) {
         editor.innerHTML = sanitizeRichHTML(stringValue);
     } else {
         editor.textContent = stringValue;
@@ -276,7 +295,10 @@ function getRichTextValue(editor) {
         .replace(/\u00a0/g, " ")
         .trim();
 
-    if (text === "") {
+    if (
+        text === "" &&
+        !editor.querySelector("img")
+    ) {
         return "";
     }
 
@@ -288,7 +310,7 @@ function formatChemicalText(value = "") {
     let text = String(value);
 
     // Если форматирование уже есть — ничего автоматически не меняем
-    if (/<(?:sub|sup|br)\b/i.test(text)) {
+    if (/<(?:sub|sup|br|img)\b/i.test(text)) {
         return sanitizeRichHTML(text);
     }
 
@@ -350,6 +372,69 @@ function getPlainRichText(value = "") {
     return holder.textContent || "";
 }
 
+async function uploadCardImage(file) {
+
+    if (!currentAuthSession) {
+        alert("Чтобы вставить картинку, войдите в аккаунт.");
+        return null;
+    }
+
+    const allowedTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/gif"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+        alert("Можно загружать PNG, JPG, WEBP или GIF.");
+        return null;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        alert("Размер картинки не должен превышать 5 МБ.");
+        return null;
+    }
+
+    const extension =
+        file.name.split(".").pop().toLowerCase();
+
+    const randomId =
+        typeof crypto !== "undefined" &&
+        crypto.randomUUID
+            ? crypto.randomUUID()
+            : Date.now() +
+              "-" +
+              Math.random()
+                  .toString(16)
+                  .slice(2);
+
+    const path =
+        `${currentAuthSession.user.id}/${randomId}.${extension}`;
+
+    const { error } =
+        await supabaseClient.storage
+            .from("card-images")
+            .upload(path, file, {
+                contentType: file.type,
+                upsert: false
+            });
+
+    if (error) {
+        alert(
+            "Не удалось загрузить картинку: " +
+            error.message
+        );
+        return null;
+    }
+
+    const { data } =
+        supabaseClient.storage
+            .from("card-images")
+            .getPublicUrl(path);
+
+    return data.publicUrl;
+}
 
 function createRichTextField(className, placeholder, value = "") {
 
@@ -375,6 +460,37 @@ function createRichTextField(className, placeholder, value = "") {
 
     toolbar.appendChild(subButton);
     toolbar.appendChild(supButton);
+
+    const imageButton = document.createElement("button");
+    imageButton.type = "button";
+    imageButton.className = "rich-format-button";
+    imageButton.textContent = "🖼️";
+    imageButton.title = "Вставить картинку";
+    imageButton.setAttribute("aria-label", "Вставить картинку");
+
+    const imageInput = document.createElement("input");
+    imageInput.type = "file";
+    imageInput.accept = "image/png,image/jpeg,image/webp,image/gif";
+    imageInput.style.display = "none";
+
+    toolbar.appendChild(imageButton);
+    toolbar.appendChild(imageInput);
+
+    let savedRange = null;
+
+    function saveSelection() {
+        const selection = window.getSelection();
+
+        if (!selection || selection.rangeCount === 0) {
+            return;
+        }
+
+        const range = selection.getRangeAt(0);
+
+        if (editor.contains(range.commonAncestorContainer)) {
+            savedRange = range.cloneRange();
+        }
+    }
 
     const editor = document.createElement("div");
     editor.className = className + " rich-text-editor";
@@ -406,6 +522,112 @@ function createRichTextField(className, placeholder, value = "") {
 
     supButton.addEventListener("click", function() {
         applyFormat("superscript");
+    });
+
+    imageButton.addEventListener("mousedown", function(event) {
+        event.preventDefault();
+        saveSelection();
+    });
+
+    imageButton.addEventListener("click", function() {
+        imageInput.click();
+    });
+
+    imageInput.addEventListener("change", async function() {
+        const file = imageInput.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        const imageUrl = await uploadCardImage(file);
+
+        if (imageUrl) {
+            editor.focus();
+
+            const image = document.createElement("img");
+            image.src = imageUrl;
+            image.alt = "";
+            image.className = "rich-inline-image";
+
+            if (savedRange) {
+                const selection = window.getSelection();
+
+                selection.removeAllRanges();
+                selection.addRange(savedRange);
+
+                savedRange.deleteContents();
+                savedRange.insertNode(image);
+
+                const newRange = document.createRange();
+                newRange.setStartAfter(image);
+                newRange.collapse(true);
+
+                selection.removeAllRanges();
+                selection.addRange(newRange);
+            } else {
+                editor.appendChild(image);
+            }
+        }
+
+        imageInput.value = "";
+    });
+
+    editor.addEventListener("paste", async function(event) {
+        const items = event.clipboardData?.items;
+
+        if (!items) {
+            return;
+        }
+
+        let imageFile = null;
+
+        for (const item of items) {
+            if (item.type.startsWith("image/")) {
+                imageFile = item.getAsFile();
+                break;
+            }
+        }
+
+        if (!imageFile) {
+            return;
+        }
+
+        event.preventDefault();
+
+        saveSelection();
+
+        const imageUrl = await uploadCardImage(imageFile);
+
+        if (!imageUrl) {
+            return;
+        }
+
+        editor.focus();
+
+        const image = document.createElement("img");
+        image.src = imageUrl;
+        image.alt = "";
+        image.className = "rich-inline-image";
+
+        if (savedRange) {
+            const selection = window.getSelection();
+
+            selection.removeAllRanges();
+            selection.addRange(savedRange);
+
+            savedRange.deleteContents();
+            savedRange.insertNode(image);
+
+            const newRange = document.createRange();
+            newRange.setStartAfter(image);
+            newRange.collapse(true);
+
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+        } else {
+            editor.appendChild(image);
+        }
     });
 
     wrapper.appendChild(toolbar);
